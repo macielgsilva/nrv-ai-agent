@@ -27,5 +27,5 @@
 - [x] Implementar backup automatizado do ChromaDB para OCI com retenção e restauração verificada.
 - [x] Gerar e validar um pacote ZIP seguro para GitHub e OCI.
 - [x] Preparar roteiro exato de implantação do pacote na OCI Free Tier.
-- [ ] Sincronizar a versão final do projeto Manus com o repositório GitHub nrv-ai-agent.
+- [x] Sincronizar a versão final do projeto Manus com o repositório GitHub nrv-ai-agent.
 - [x] Alinhar o modelo systemd da skill ao teste de aceitação e ao roteiro de implantação OCI.
