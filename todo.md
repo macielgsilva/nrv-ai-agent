@@ -1,0 +1,31 @@
+# Project TODO
+
+- [x] Inspecionar a implementação Python, a ingestão e o erro de modelo reportado.
+- [x] Modelar o catálogo NRV com os preços, prazos e observações fornecidos.
+- [x] Implementar a navegação móvel para Início, Serviços e Orçamento.
+- [x] Implementar conversa com assistente no servidor, usando contexto controlado do catálogo.
+- [x] Implementar seleção de serviços, quantidades, cálculo e compartilhamento de orçamento.
+- [x] Aplicar uma correção documentada e compatível no código Python original.
+- [x] Criar ícone exclusivo e atualizar a identidade do aplicativo.
+- [x] Validar tipos, testes, fluxos e apresentação móvel.
+- [x] Criar painel administrativo simples para cadastrar, editar e remover serviços.
+- [x] Persistir as alterações administrativas e refletir os serviços atualizados no catálogo e no assistente.
+- [x] Validar o fluxo administrativo e atualizar os testes automatizados.
+- [x] Preparar roteiro para versão web, GitHub e publicação na Oracle Cloud Infrastructure.
+- [x] Incluir instruções de execução e validação local no Windows no guia de publicação.
+- [x] Adicionar checklist de pré-deploy para OCI ao final do README.
+- [x] Adicionar checklist pós-deploy para OCI ao final do README.
+- [x] Criar habilidade reutilizável para diagnóstico de agente, aplicativo móvel e implantação OCI.
+- [x] Documentar em detalhe a configuração de systemd e Nginx para Streamlit na OCI.
+- [x] Empacotar a skill rag-service-agent-mobile-oci dentro do projeto.
+- [x] Documentar no README o uso e a configuração da skill empacotada.
+- [x] Adicionar exemplos completos de entrada e saída da skill ao README.
+- [x] Implementar testes de aceitação automatizados para os exemplos da skill.
+- [x] Executar e registrar a suíte de aceitação automatizada.
+- [x] Criar e validar um script isolado de backup, atualização e restauração do ChromaDB.
+- [x] Atualizar a skill rag-service-agent-mobile-oci com o teste de ciclo do ChromaDB e testes de aceitação.
+- [x] Implementar backup automatizado do ChromaDB para OCI com retenção e restauração verificada.
+- [x] Gerar e validar um pacote ZIP seguro para GitHub e OCI.
+- [x] Preparar roteiro exato de implantação do pacote na OCI Free Tier.
+- [ ] Sincronizar a versão final do projeto Manus com o repositório GitHub nrv-ai-agent.
+- [x] Alinhar o modelo systemd da skill ao teste de aceitação e ao roteiro de implantação OCI.
