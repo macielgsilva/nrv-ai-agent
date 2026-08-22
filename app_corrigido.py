@@ -15,16 +15,34 @@ st.set_page_config(page_title="Agente NRV Informática", page_icon="💻", layou
 st.title("💻 Atendimento Service Desk — NRV Informática")
 st.markdown("Descreva o problema do equipamento para iniciar um pré-orçamento.")
 
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
-CHROMA_DIR = os.getenv("CHROMA_DIR", "./chroma_db")
-CHROMA_COLLECTION = os.getenv("CHROMA_COLLECTION", "nrv_informatica")
+def setting(name: str, default: str | None = None) -> str | None:
+    """Lê configuração do ambiente ou dos segredos do Streamlit sem exibi-los."""
+    value = os.getenv(name)
+    if value:
+        return value
+    try:
+        secret = st.secrets.get(name)
+    except Exception:
+        secret = None
+    return str(secret) if secret not in (None, "") else default
+
+
+def enabled(name: str, default: bool = False) -> bool:
+    value = setting(name, str(default))
+    return str(value).strip().lower() in {"1", "true", "yes", "sim"}
+
+
+GOOGLE_API_KEY = setting("GOOGLE_API_KEY") or setting("GEMINI_API_KEY")
+CHROMA_DIR = setting("CHROMA_DIR", "./chroma_db")
+CHROMA_COLLECTION = setting("CHROMA_COLLECTION", "nrv_informatica")
 
 # gemini-2.5-flash deixou de estar disponível para novos usuários.
 # A variável permite trocar a versão no .env sem alterar o código.
-GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.6-flash")
-EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "gemini-embedding-2")
-EMBEDDING_DIMENSION = int(os.getenv("EMBEDDING_DIMENSION", "768"))
-TOP_K = int(os.getenv("RAG_TOP_K", "4"))
+GEMINI_MODEL = setting("GEMINI_MODEL", "gemini-3.6-flash")
+EMBEDDING_MODEL = setting("EMBEDDING_MODEL", "gemini-embedding-2")
+EMBEDDING_DIMENSION = int(setting("EMBEDDING_DIMENSION", "768") or "768")
+TOP_K = int(setting("RAG_TOP_K", "4") or "4")
+AUTO_BUILD_CHROMA = enabled("AUTO_BUILD_CHROMA", False)
 
 
 def configuration_error_message(error: Exception) -> str:
@@ -54,9 +72,14 @@ def load_chain():
         )
 
     if not os.path.isdir(CHROMA_DIR):
-        raise FileNotFoundError(
-            f"Diretório Chroma não encontrado: {CHROMA_DIR}. Execute ingest_data.py para criar a base."
-        )
+        if AUTO_BUILD_CHROMA:
+            from ingest_data import create_vector_store
+
+            create_vector_store()
+        else:
+            raise FileNotFoundError(
+                f"Diretório Chroma não encontrado: {CHROMA_DIR}. Execute ingest_data.py para criar a base."
+            )
 
     embeddings = GoogleGenerativeAIEmbeddings(
         model=EMBEDDING_MODEL,
@@ -70,7 +93,17 @@ def load_chain():
     )
 
     if vectorstore._collection.count() == 0:
-        raise RuntimeError("A coleção Chroma está vazia. Execute ingest_data.py para recriar a base.")
+        if AUTO_BUILD_CHROMA:
+            from ingest_data import create_vector_store
+
+            create_vector_store()
+            vectorstore = Chroma(
+                collection_name=CHROMA_COLLECTION,
+                persist_directory=CHROMA_DIR,
+                embedding_function=embeddings,
+            )
+        if vectorstore._collection.count() == 0:
+            raise RuntimeError("A coleção Chroma está vazia. Execute ingest_data.py para recriar a base.")
 
     llm = ChatGoogleGenerativeAI(
         model=GEMINI_MODEL,

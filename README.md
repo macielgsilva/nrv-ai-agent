@@ -47,6 +47,16 @@ cd nrv-ai-agent
 
 ---
 
+## ☁️ Teste no Streamlit Community Cloud
+
+O projeto também está preparado para uma **demonstração pública temporária** no Streamlit Community Cloud. O arquivo de entrada é `app.py`, as dependências estão em `requirements.txt` e a base vetorial é reconstruída a partir de `data/Tabela_Servicos_NRV.xlsx` quando `AUTO_BUILD_CHROMA=true` está configurado nos segredos da plataforma.
+
+> A chave Gemini nunca deve ser incluída no Git, em `app.py`, no arquivo de planilha ou em mensagens de commit. Informe-a somente em **Advanced settings → Secrets** ao criar a aplicação no Streamlit Community Cloud. A base `chroma_db/` continua ignorada, pois é derivada e não deve ser tratada como armazenamento persistente nessa modalidade. [4] [5]
+
+Consulte o procedimento completo, o bloco de segredos sem valores reais e a validação recomendada em [`docs/GUIA_STREAMLIT_COMMUNITY_CLOUD.md`](docs/GUIA_STREAMLIT_COMMUNITY_CLOUD.md). Para produção, backup e operação contínua, mantenha o caminho de implantação na OCI descrito nas seções seguintes.
+
+---
+
 ## ✅ Checklist de pré-deploy — Oracle Cloud Infrastructure
 
 Antes de publicar o agente NRV em uma instância OCI, confirme cada item abaixo. O objetivo é evitar a exposição de segredos, a publicação de uma base RAG incompleta e falhas de conectividade após a criação da VM.
@@ -467,3 +477,7 @@ mantém o aviso de avaliação técnica e não revela detalhes internos da VM.
 [2] [Oracle Cloud Infrastructure — Security Lists](https://docs.oracle.com/iaas/Content/Network/Concepts/securitylists.htm)
 
 [3] [Oracle Cloud Infrastructure CLI — object put](https://docs.oracle.com/iaas/tools/oci-cli/latest/oci_cli_docs/cmdref/os/object/put.html)
+
+[4] [Streamlit Community Cloud — App dependencies](https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app/app-dependencies)
+
+[5] [Streamlit Community Cloud — Secrets management](https://docs.streamlit.io/deploy/streamlit-community-cloud/deploy-your-app/secrets-management)

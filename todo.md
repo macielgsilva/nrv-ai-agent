@@ -29,3 +29,8 @@
 - [x] Preparar roteiro exato de implantação do pacote na OCI Free Tier.
 - [x] Sincronizar a versão final do projeto Manus com o repositório GitHub nrv-ai-agent.
 - [x] Alinhar o modelo systemd da skill ao teste de aceitação e ao roteiro de implantação OCI.
+- [x] Criar um guia OCI Free Tier em linguagem simples para implantação por pessoa leiga.
+- [x] Criar script Bash idempotente para instalar dependências e preparar o agente NRV na OCI.
+- [ ] Configurar domínio próprio, DNS, Nginx e HTTPS para o agente NRV na OCI.
+- [ ] Auditar, documentar, testar e sincronizar no GitHub a implantação OCI funcional, sem segredos ou dados sensíveis.
+- [ ] Preparar e sincronizar a implantação de teste no Streamlit Community Cloud, mantendo a chave Gemini apenas nos segredos da plataforma.

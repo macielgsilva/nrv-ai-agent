@@ -30,12 +30,15 @@ describe("skill rag-service-agent-mobile-oci — acceptance scenarios", () => {
     vi.clearAllMocks();
   });
 
-  it("accepts the RAG diagnosis scenario with configurable model, safe env example, and complete dependencies", () => {
+  it("accepts the RAG diagnosis scenario with configurable model, safe secrets, and complete dependencies", () => {
     const app = readProjectFile("app_corrigido.py");
     const readme = readProjectFile("README.md");
     const requirements = readProjectFile("requirements_corrigido.txt");
+    const cloudRequirements = readProjectFile("requirements.txt");
+    const cloudSecretsExample = readProjectFile(".streamlit/secrets.toml.example");
 
-    expect(app).toContain('GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.6-flash")');
+    expect(app).toContain('GEMINI_MODEL = setting("GEMINI_MODEL", "gemini-3.6-flash")');
+    expect(app).toContain("st.secrets.get");
     expect(app).toContain("create_retrieval_chain");
     expect(app).toContain("análise em bancada no valor de R$ 50,00");
     expect(readme).toContain("GOOGLE_API_KEY=sua_chave_privada");
@@ -44,6 +47,9 @@ describe("skill rag-service-agent-mobile-oci — acceptance scenarios", () => {
     expect(requirements).toContain("langchain-chroma");
     expect(requirements).toContain("pandas");
     expect(requirements).toContain("openpyxl");
+    expect(cloudRequirements).toContain("chromadb");
+    expect(cloudSecretsExample).toContain('GOOGLE_API_KEY = "COLE_SUA_CHAVE_GEMINI_AQUI"');
+    expect(cloudSecretsExample).not.toMatch(/AIza[\w-]{20,}/);
   });
 
   it("accepts the mobile catalog and pre-quote scenario with deterministic totals", () => {
