@@ -1,3 +1,4 @@
+import logging
 import os
 
 import streamlit as st
@@ -10,6 +11,8 @@ from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmb
 
 
 load_dotenv()
+
+LOGGER = logging.getLogger("nrv.streamlit")
 
 st.set_page_config(page_title="Agente NRV Informática", page_icon="💻", layout="centered")
 st.title("💻 Atendimento Service Desk — NRV Informática")
@@ -76,6 +79,15 @@ def configuration_error_message(error: Exception) -> str:
     if isinstance(error, FileNotFoundError):
         return str(error)
     return "Não foi possível carregar a base de conhecimento. Verifique a configuração e tente novamente."
+
+
+def safe_error_detail(error: Exception) -> str:
+    """Prepara o detalhe do erro para logs sem permitir vazamento de segredos."""
+    detail = str(error)
+    for secret in (GOOGLE_API_KEY, setting("GEMINI_API_KEY")):
+        if secret:
+            detail = detail.replace(secret, "[REDACTED]")
+    return detail[:1200]
 
 
 @st.cache_resource
@@ -158,6 +170,11 @@ try:
         chain = load_chain()
         status.update(label="Base de conhecimento pronta.", state="complete", expanded=False)
 except Exception as error:
+    LOGGER.error(
+        "NRV_STARTUP_FAILURE type=%s detail=%s",
+        type(error).__name__,
+        safe_error_detail(error),
+    )
     try:
         status.update(label="Não foi possível preparar a base de conhecimento.", state="error", expanded=True)
     except NameError:
