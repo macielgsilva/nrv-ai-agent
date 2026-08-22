@@ -44,6 +44,20 @@ EMBEDDING_DIMENSION = int(setting("EMBEDDING_DIMENSION", "768") or "768")
 TOP_K = int(setting("RAG_TOP_K", "4") or "4")
 AUTO_BUILD_CHROMA = enabled("AUTO_BUILD_CHROMA", False)
 
+# A rotina de ingestão também pode ser chamada dentro do processo Streamlit.
+# Nesse caso, disponibiliza os valores lidos de st.secrets para o módulo que
+# continua compatível com execução local por linha de comando.
+for _name, _value in {
+    "GOOGLE_API_KEY": GOOGLE_API_KEY,
+    "CHROMA_DIR": CHROMA_DIR,
+    "CHROMA_COLLECTION": CHROMA_COLLECTION,
+    "EMBEDDING_MODEL": EMBEDDING_MODEL,
+    "EMBEDDING_DIMENSION": str(EMBEDDING_DIMENSION),
+    "EXCEL_FILE": setting("EXCEL_FILE", "data/Tabela_Servicos_NRV.xlsx"),
+}.items():
+    if _value:
+        os.environ.setdefault(_name, str(_value))
+
 
 def configuration_error_message(error: Exception) -> str:
     """Converte erros previsíveis em orientação objetiva para quem opera o app."""
@@ -139,8 +153,15 @@ CONTEXTO RECUPERADO:
 
 
 try:
-    chain = load_chain()
+    with st.status("Preparando a base de conhecimento da NRV...", expanded=True) as status:
+        st.write("Validando os segredos, a planilha de serviços e a base vetorial.")
+        chain = load_chain()
+        status.update(label="Base de conhecimento pronta.", state="complete", expanded=False)
 except Exception as error:
+    try:
+        status.update(label="Não foi possível preparar a base de conhecimento.", state="error", expanded=True)
+    except NameError:
+        pass
     st.error(configuration_error_message(error))
     st.info("Após alterar o modelo de embedding ou sua dimensão, execute ingest_data.py para reconstruir a base vetorial.")
     st.stop()
